@@ -81,7 +81,7 @@ export function ProjectsList({
 function ProjectCard({
   project,
   isAdmin,
-  archived = false
+  archived = false,
   isLocal = false
 }: {
   project: NormalizedProject;
