@@ -24,6 +24,7 @@ model Project {
   closeCartDate DateTime?
   createdAt     DateTime @default(now())
   launchSetupCompleted Boolean @default(false)
+  archived      Boolean  @default(false)
 
   strategy      Strategy?
   offer         Offer?

@@ -1,20 +1,23 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Plus, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
-import { createProject } from "@/lib/actions";
+import { LOCAL_PROJECTS_KEY, normalizeProject } from "@/lib/project-normalize";
 
 const MAX_LOGO_SIZE = 512 * 1024;
 
 export function ProjectCreateModal() {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [logoPreview, setLogoPreview] = useState("");
   const [logoError, setLogoError] = useState("");
+  const [formError, setFormError] = useState("");
   const [projectName, setProjectName] = useState("");
 
   const initials = useMemo(() => {
@@ -26,6 +29,7 @@ export function ProjectCreateModal() {
   function resetModal() {
     setLogoPreview("");
     setLogoError("");
+    setFormError("");
     setProjectName("");
   }
 
@@ -68,6 +72,39 @@ export function ProjectCreateModal() {
     reader.readAsDataURL(file);
   }
 
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setFormError("");
+
+    const formData = new FormData(event.currentTarget);
+    const name = String(formData.get("name") || "").trim();
+    const expert = String(formData.get("expert") || "").trim();
+    const launchType = String(formData.get("launchType") || "").trim() || "Clássico";
+
+    if (!name || !expert) {
+      setFormError("Preencha nome do projeto e nome do expert.");
+      return;
+    }
+
+    const project = normalizeProject({
+      name,
+      expert,
+      launchType,
+      logo: logoPreview || null,
+      status: "Em andamento",
+      createdAt: new Date().toISOString(),
+      launchSetupCompleted: false,
+      archived: false
+    });
+
+    const storedProjects = readStoredProjects();
+    localStorage.setItem(LOCAL_PROJECTS_KEY, JSON.stringify([project, ...storedProjects]));
+    window.dispatchEvent(new Event("lp-projects-updated"));
+    closeModal();
+    router.replace("/projects");
+    router.refresh();
+  }
+
   return (
     <>
       <Button type="button" onClick={() => setOpen(true)}>
@@ -93,10 +130,7 @@ export function ProjectCreateModal() {
               </button>
             </div>
 
-            <form action={createProject} className="space-y-5">
-              <input name="status" type="hidden" value="Pendente" />
-              <input name="logoUrl" type="hidden" value={logoPreview} />
-
+            <form className="space-y-5" onSubmit={handleSubmit}>
               <div className="grid gap-4">
                 <Field label="Nome do projeto" name="name" required onChange={(value) => setProjectName(value)} />
                 <Field label="Nome do expert" name="expert" required />
@@ -119,6 +153,8 @@ export function ProjectCreateModal() {
                 </div>
               </div>
 
+              {formError ? <p className="rounded-md border border-red-400/25 bg-red-400/10 px-3 py-2 text-sm text-red-200">{formError}</p> : null}
+
               <div className="flex flex-col-reverse gap-3 border-t border-luxury-border pt-5 sm:flex-row sm:justify-end">
                 <Button type="button" variant="outline" onClick={closeModal}>
                   Cancelar
@@ -133,6 +169,17 @@ export function ProjectCreateModal() {
       ) : null}
     </>
   );
+}
+
+function readStoredProjects() {
+  if (typeof window === "undefined") return [];
+
+  try {
+    const parsed = JSON.parse(localStorage.getItem(LOCAL_PROJECTS_KEY) || "[]");
+    return Array.isArray(parsed) ? parsed.map((project) => normalizeProject(project)).filter((project) => !project.archived) : [];
+  } catch {
+    return [];
+  }
 }
 
 function Field({

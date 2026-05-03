@@ -2,15 +2,16 @@ import Link from "next/link";
 import { Flag } from "lucide-react";
 
 import { ProjectCreateModal } from "@/components/project-create-modal";
+import { ProjectsList } from "@/components/projects-list";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { demoProject } from "@/lib/demo-data";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { normalizeProject } from "@/lib/project-normalize";
 
 type ProjectCardData = typeof demoProject & {
+  logo?: string | null;
   logoUrl?: string | null;
   notes?: string | null;
 };
@@ -21,42 +22,11 @@ function getVisibleProjects(projects: ProjectCardData[], user: Awaited<ReturnTyp
   return projects.filter((project) => allowedNames.includes(project.name || ""));
 }
 
-function safeText(value: unknown, fallback: string) {
-  return typeof value === "string" && value.trim() ? value.trim() : fallback;
-}
-
-function safeNumber(value: unknown) {
-  return typeof value === "number" && Number.isFinite(value) ? value : 0;
-}
-
-function initialsFromName(name: string) {
-  const words = name.trim().split(/\s+/).filter(Boolean);
-  const letters = words.length > 1 ? `${words[0][0]}${words[1][0]}` : words[0]?.slice(0, 2);
-  return (letters || "LP").toUpperCase();
-}
-
-function normalizeProject(project: Partial<ProjectCardData>) {
-  const name = safeText(project.name, "Projeto sem nome");
-
-  return {
-    id: safeText(project.id, "demo-project"),
-    name,
-    initials: initialsFromName(name),
-    expert: safeText(project.expert, "Expert a definir"),
-    product: safeText(project.product, "Oferta a definir"),
-    launchType: safeText(project.launchType, "Lançamento a definir"),
-    logoUrl: safeText(project.logoUrl, ""),
-    status: safeText(project.status, "Pendente"),
-    revenueGoal: safeNumber(project.revenueGoal),
-    openCartDate: project.openCartDate || null
-  };
-}
-
 export default async function ProjectsPage() {
   const user = await getCurrentUser();
   const loadedProjects = await prisma.project.findMany({ orderBy: { createdAt: "desc" } }).catch(() => [demoProject]);
   const projects = Array.isArray(loadedProjects) ? loadedProjects : [];
-  const visibleProjects = getVisibleProjects(projects as ProjectCardData[], user).map(normalizeProject);
+  const visibleProjects = getVisibleProjects(projects as ProjectCardData[], user).map((project) => normalizeProject(project));
   const isAdmin = user?.role === "admin";
 
   return (
@@ -92,67 +62,7 @@ export default async function ProjectsPage() {
           {isAdmin ? <ProjectCreateModal /> : null}
         </section>
 
-        {visibleProjects.length ? (
-          <div className="grid gap-5 xl:grid-cols-2">
-            {visibleProjects.map((project) => {
-              const ctaLabel = isAdmin ? "Abrir projeto" : "Visualizar projeto";
-
-              return (
-                <Card key={project.id} className="bg-luxury-card hover:bg-luxury-elevated">
-                  <CardContent className="p-6">
-                    <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
-                      <div className="flex min-w-0 gap-4">
-                        <div className="grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-lg border border-luxury-goldBorder/70 bg-luxury-elevated font-serif text-2xl font-semibold text-primary shadow-glow">
-                          {project.logoUrl ? (
-                            <img alt={`Logo de ${project.name}`} className="h-full w-full object-cover" src={project.logoUrl} />
-                          ) : (
-                            project.initials
-                          )}
-                        </div>
-                        <div className="min-w-0">
-                          <div className="mb-2 flex flex-wrap items-center gap-2">
-                            <h3 className="truncate text-2xl font-semibold">{project.name}</h3>
-                            <Badge>{project.status}</Badge>
-                          </div>
-                          <p className="text-sm text-muted-foreground">{project.expert}</p>
-                          <p className="mt-1 text-sm text-muted-foreground">{project.launchType}</p>
-                        </div>
-                      </div>
-
-                      <Button asChild size="sm" variant={isAdmin ? "default" : "outline"}>
-                        <Link href={`/project/${project.id}`}>{ctaLabel}</Link>
-                      </Button>
-                    </div>
-
-                    <div className="mt-6 grid gap-4 border-t border-luxury-border pt-5 text-sm md:grid-cols-3">
-                      <div>
-                        <p className="text-muted-foreground">Produto/oferta</p>
-                        <p className="mt-1 font-medium">{project.product}</p>
-                      </div>
-                      <div>
-                        <p className="text-muted-foreground">Meta de faturamento</p>
-                        <p className="mt-1 font-medium">{formatCurrency(project.revenueGoal)}</p>
-                      </div>
-                      <div>
-                        <p className="text-muted-foreground">Abertura do carrinho</p>
-                        <p className="mt-1 font-medium">{formatDate(project.openCartDate)}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        ) : (
-          <Card>
-            <CardContent className="p-8">
-              <h3 className="text-xl font-semibold">Nenhum projeto liberado</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Quando um projeto estiver disponível para este usuário, ele aparecerá aqui.
-              </p>
-            </CardContent>
-          </Card>
-        )}
+        <ProjectsList initialProjects={visibleProjects} isAdmin={isAdmin} />
       </div>
     </main>
   );

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { prisma } from "@/lib/db";
 import { assertAdmin } from "@/lib/auth";
+import { normalizeProject } from "@/lib/project-normalize";
 import { toDate, toNumber, toText } from "@/lib/utils";
 
 const DEFAULT_PROJECT_NAME = "Projeto sem nome";
@@ -19,34 +20,55 @@ function projectId(formData: FormData) {
 export async function createProject(formData: FormData) {
   await assertAdmin();
 
-  const name = toText(formData.get("name")) || DEFAULT_PROJECT_NAME;
-  const expert = toText(formData.get("expert")) || DEFAULT_PROJECT_EXPERT;
-  const launchType = toText(formData.get("launchType")) || DEFAULT_LAUNCH_TYPE;
-  const logoUrl = toText(formData.get("logoUrl"));
+  const rawName = toText(formData.get("name"));
+  const rawExpert = toText(formData.get("expert"));
 
-  await prisma.project.create({
-    data: {
-      name,
-      expert,
-      product: toText(formData.get("product")) || DEFAULT_PROJECT_PRODUCT,
-      launchType,
-      logoUrl,
-      notes: toText(formData.get("notes")),
-      status: toText(formData.get("status")) || "Pendente",
-      launchSetupCompleted: false,
-      revenueGoal: toNumber(formData.get("revenueGoal")),
-      leadsGoal: Math.round(toNumber(formData.get("leadsGoal"))),
-      budget: toNumber(formData.get("budget")),
-      startDate: toDate(formData.get("startDate")),
-      openCartDate: toDate(formData.get("openCartDate")),
-      closeCartDate: toDate(formData.get("closeCartDate")),
-      strategy: { create: { niche: toText(formData.get("niche")) } },
-      offer: { create: {} },
-      contents: {
-        create: ["CPL1", "CPL2", "CPL3", "VSL"].map((type) => ({ type }))
-      }
-    }
+  if (!rawName || !rawExpert) {
+    redirect("/projects");
+  }
+
+  const project = normalizeProject({
+    name: rawName || DEFAULT_PROJECT_NAME,
+    expert: rawExpert || DEFAULT_PROJECT_EXPERT,
+    product: toText(formData.get("product")) || DEFAULT_PROJECT_PRODUCT,
+    launchType: toText(formData.get("launchType")) || DEFAULT_LAUNCH_TYPE,
+    logo: toText(formData.get("logoUrl")),
+    status: "Em andamento",
+    createdAt: new Date().toISOString(),
+    launchSetupCompleted: false,
+    archived: false,
+    revenueGoal: toNumber(formData.get("revenueGoal")),
+    openCartDate: toDate(formData.get("openCartDate"))
   });
+
+  try {
+    await prisma.project.create({
+      data: {
+        name: project.name,
+        expert: project.expert,
+        product: project.product,
+        launchType: project.launchType,
+        logoUrl: project.logo || "",
+        notes: toText(formData.get("notes")),
+        status: project.status,
+        launchSetupCompleted: project.launchSetupCompleted,
+        archived: project.archived,
+        revenueGoal: project.revenueGoal,
+        leadsGoal: Math.round(toNumber(formData.get("leadsGoal"))),
+        budget: toNumber(formData.get("budget")),
+        startDate: toDate(formData.get("startDate")),
+        openCartDate: toDate(formData.get("openCartDate")),
+        closeCartDate: toDate(formData.get("closeCartDate")),
+        strategy: { create: { niche: toText(formData.get("niche")) } },
+        offer: { create: {} },
+        contents: {
+          create: ["CPL1", "CPL2", "CPL3", "VSL"].map((type) => ({ type }))
+        }
+      }
+    });
+  } catch (error) {
+    console.error("Falha ao criar projeto via Server Action.", error);
+  }
 
   revalidatePath("/");
   revalidatePath("/projects");
