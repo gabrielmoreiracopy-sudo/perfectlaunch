@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 
+import { getCurrentUser } from "@/lib/auth";
 import "./globals.css";
 
 const inter = Inter({
@@ -20,10 +21,14 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const user = await getCurrentUser();
+
   return (
     <html lang="pt-BR" className="dark">
-      <body className={`${inter.variable} ${playfair.variable} font-sans`}>{children}</body>
+      <body className={`${inter.variable} ${playfair.variable} font-sans`} data-role={user?.role ?? "guest"}>
+        {children}
+      </body>
     </html>
   );
 }

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { prisma } from "@/lib/db";
+import { assertAdmin } from "@/lib/auth";
 import { toDate, toNumber, toText } from "@/lib/utils";
 
 function projectId(formData: FormData) {
@@ -11,12 +12,16 @@ function projectId(formData: FormData) {
 }
 
 export async function createProject(formData: FormData) {
+  await assertAdmin();
+
   const project = await prisma.project.create({
     data: {
       name: toText(formData.get("name")),
       expert: toText(formData.get("expert")),
       product: toText(formData.get("product")),
       launchType: toText(formData.get("launchType")),
+      logoUrl: toText(formData.get("logoUrl")),
+      notes: toText(formData.get("notes")),
       status: toText(formData.get("status")) || "Pendente",
       revenueGoal: toNumber(formData.get("revenueGoal")),
       leadsGoal: Math.round(toNumber(formData.get("leadsGoal"))),
@@ -24,7 +29,7 @@ export async function createProject(formData: FormData) {
       startDate: toDate(formData.get("startDate")),
       openCartDate: toDate(formData.get("openCartDate")),
       closeCartDate: toDate(formData.get("closeCartDate")),
-      strategy: { create: {} },
+      strategy: { create: { niche: toText(formData.get("niche")) } },
       offer: { create: {} },
       contents: {
         create: ["CPL1", "CPL2", "CPL3", "VSL"].map((type) => ({ type }))
@@ -33,10 +38,13 @@ export async function createProject(formData: FormData) {
   });
 
   revalidatePath("/");
-  redirect(`/projects/${project.id}`);
+  revalidatePath("/projects");
+  redirect("/projects");
 }
 
 export async function updateProject(formData: FormData) {
+  await assertAdmin();
+
   const id = projectId(formData);
   await prisma.project.update({
     where: { id },
@@ -45,6 +53,8 @@ export async function updateProject(formData: FormData) {
       expert: toText(formData.get("expert")),
       product: toText(formData.get("product")),
       launchType: toText(formData.get("launchType")),
+      logoUrl: toText(formData.get("logoUrl")),
+      notes: toText(formData.get("notes")),
       status: toText(formData.get("status")),
       revenueGoal: toNumber(formData.get("revenueGoal")),
       leadsGoal: Math.round(toNumber(formData.get("leadsGoal"))),
@@ -55,15 +65,21 @@ export async function updateProject(formData: FormData) {
     }
   });
   revalidatePath("/");
+  revalidatePath("/projects");
 }
 
 export async function deleteProject(formData: FormData) {
+  await assertAdmin();
+
   await prisma.project.delete({ where: { id: projectId(formData) } });
   revalidatePath("/");
-  redirect("/");
+  revalidatePath("/projects");
+  redirect("/projects");
 }
 
 export async function upsertStrategy(formData: FormData) {
+  await assertAdmin();
+
   const id = projectId(formData);
   await prisma.strategy.upsert({
     where: { projectId: id },
@@ -89,6 +105,8 @@ export async function upsertStrategy(formData: FormData) {
 }
 
 export async function upsertOffer(formData: FormData) {
+  await assertAdmin();
+
   const id = projectId(formData);
   await prisma.offer.upsert({
     where: { projectId: id },
@@ -114,6 +132,8 @@ export async function upsertOffer(formData: FormData) {
 }
 
 export async function saveContent(formData: FormData) {
+  await assertAdmin();
+
   await prisma.content.update({
     where: { id: toText(formData.get("id")) },
     data: {
@@ -127,6 +147,8 @@ export async function saveContent(formData: FormData) {
 }
 
 export async function createCreative(formData: FormData) {
+  await assertAdmin();
+
   await prisma.creative.create({
     data: {
       projectId: projectId(formData),
@@ -144,6 +166,8 @@ export async function createCreative(formData: FormData) {
 }
 
 export async function updateCreative(formData: FormData) {
+  await assertAdmin();
+
   await prisma.creative.update({
     where: { id: toText(formData.get("id")) },
     data: {
@@ -161,6 +185,8 @@ export async function updateCreative(formData: FormData) {
 }
 
 export async function createPage(formData: FormData) {
+  await assertAdmin();
+
   await prisma.page.create({
     data: {
       projectId: projectId(formData),
@@ -173,6 +199,8 @@ export async function createPage(formData: FormData) {
 }
 
 export async function updatePage(formData: FormData) {
+  await assertAdmin();
+
   await prisma.page.update({
     where: { id: toText(formData.get("id")) },
     data: {
@@ -185,6 +213,8 @@ export async function updatePage(formData: FormData) {
 }
 
 export async function createTrackingLink(formData: FormData) {
+  await assertAdmin();
+
   await prisma.trackingLink.create({
     data: {
       projectId: projectId(formData),
@@ -199,6 +229,8 @@ export async function createTrackingLink(formData: FormData) {
 }
 
 export async function updateTrackingLink(formData: FormData) {
+  await assertAdmin();
+
   await prisma.trackingLink.update({
     where: { id: toText(formData.get("id")) },
     data: {
@@ -213,6 +245,8 @@ export async function updateTrackingLink(formData: FormData) {
 }
 
 export async function createMessage(formData: FormData) {
+  await assertAdmin();
+
   await prisma.message.create({
     data: {
       projectId: projectId(formData),
@@ -229,6 +263,8 @@ export async function createMessage(formData: FormData) {
 }
 
 export async function updateMessage(formData: FormData) {
+  await assertAdmin();
+
   await prisma.message.update({
     where: { id: toText(formData.get("id")) },
     data: {
@@ -245,6 +281,8 @@ export async function updateMessage(formData: FormData) {
 }
 
 export async function createLead(formData: FormData) {
+  await assertAdmin();
+
   await prisma.lead.create({
     data: {
       projectId: projectId(formData),
@@ -260,6 +298,8 @@ export async function createLead(formData: FormData) {
 }
 
 export async function updateLead(formData: FormData) {
+  await assertAdmin();
+
   await prisma.lead.update({
     where: { id: toText(formData.get("id")) },
     data: {
@@ -275,6 +315,8 @@ export async function updateLead(formData: FormData) {
 }
 
 export async function createFileLink(formData: FormData) {
+  await assertAdmin();
+
   await prisma.fileLink.create({
     data: {
       projectId: projectId(formData),
@@ -288,6 +330,8 @@ export async function createFileLink(formData: FormData) {
 }
 
 export async function updateFileLink(formData: FormData) {
+  await assertAdmin();
+
   await prisma.fileLink.update({
     where: { id: toText(formData.get("id")) },
     data: {
@@ -301,6 +345,8 @@ export async function updateFileLink(formData: FormData) {
 }
 
 export async function deleteRecord(formData: FormData) {
+  await assertAdmin();
+
   const model = toText(formData.get("model"));
   const id = toText(formData.get("id"));
 

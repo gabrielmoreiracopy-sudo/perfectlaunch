@@ -6,6 +6,8 @@ export const demoProject = {
   expert: "Gabriel Moreira",
   product: "Mentoria Lançamento Perfeito",
   launchType: "Lançamento interno",
+  logoUrl: "",
+  notes: "Projeto demonstrativo inicial.",
   status: "Em andamento",
   revenueGoal: 150000,
   leadsGoal: 5000,

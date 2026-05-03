@@ -13,6 +13,8 @@ model Project {
   expert        String
   product       String
   launchType    String
+  logoUrl       String   @default("")
+  notes         String   @default("")
   status        String   @default("Pendente")
   revenueGoal   Float    @default(0)
   leadsGoal     Int      @default(0)

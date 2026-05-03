@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { deleteProject, updateProject } from "@/lib/actions";
+import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { demoProjectFull } from "@/lib/demo-data";
 import { formatCurrency, formatDate } from "@/lib/utils";
@@ -19,6 +20,7 @@ function dateValue(value?: Date | null) {
 
 export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const user = await getCurrentUser();
   const project = await prisma.project
     .findUnique({
       where: { id },
@@ -34,6 +36,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     .catch(() => demoProjectFull);
 
   if (!project) notFound();
+  if (user?.role === "viewer" && !user.allowedProjectNames?.includes(project.name)) notFound();
 
   const totalItems =
     project.contents.length +
@@ -92,6 +95,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               <div className="grid gap-4 md:grid-cols-2">
                 <FormField name="expert" label="Especialista" defaultValue={project.expert} />
                 <FormField name="product" label="Produto" defaultValue={project.product} />
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <FormField name="logoUrl" label="URL da logo" defaultValue={project.logoUrl} />
+                <FormField name="notes" label="Observações iniciais" defaultValue={project.notes} textarea />
               </div>
               <div className="grid gap-4 md:grid-cols-2">
                 <FormField name="launchType" label="Tipo" defaultValue={project.launchType} />

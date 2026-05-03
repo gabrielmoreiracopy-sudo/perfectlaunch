@@ -50,4 +50,16 @@
   span {
     @apply font-sans;
   }
+
+  body[data-role="viewer"] form button[type="submit"],
+  body[data-role="viewer"] form button[data-edit-action="true"] {
+    display: none;
+  }
+
+  body[data-role="viewer"] input:not([type="hidden"]),
+  body[data-role="viewer"] textarea,
+  body[data-role="viewer"] select {
+    pointer-events: none;
+    opacity: 0.72;
+  }
 }

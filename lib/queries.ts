@@ -1,15 +1,25 @@
+import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { demoProject, demoProjectFull } from "@/lib/demo-data";
 
+function canViewProject(projectName: string, user: Awaited<ReturnType<typeof getCurrentUser>>) {
+  if (user?.role !== "viewer") return true;
+  return Boolean(user.allowedProjectNames?.includes(projectName));
+}
+
 export async function getActiveProject(projectId?: string) {
+  const user = await getCurrentUser();
+
   try {
     if (projectId) {
       const selected = await prisma.project.findUnique({ where: { id: projectId } });
-      if (selected) return selected;
+      if (selected && canViewProject(selected.name, user)) return selected;
+      return null;
     }
-    return await prisma.project.findFirst({ orderBy: { createdAt: "desc" } });
+    const projects = await prisma.project.findMany({ orderBy: { createdAt: "desc" } });
+    return projects.find((project) => canViewProject(project.name, user)) || null;
   } catch {
-    return demoProject;
+    return canViewProject(demoProject.name, user) ? demoProject : null;
   }
 }
 

@@ -15,6 +15,7 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { getCurrentUser } from "@/lib/auth";
 import { getActiveProject } from "@/lib/queries";
 
 const navItems = [
@@ -31,7 +32,9 @@ const navItems = [
 ];
 
 export async function AppShell({ children }: { children: React.ReactNode }) {
+  const user = await getCurrentUser();
   const project = await getActiveProject();
+  const canCreateProject = user?.role === "admin";
 
   return (
     <div className="min-h-screen text-foreground">
@@ -72,14 +75,20 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
             </div>
             <div className="flex items-center gap-2">
               {project ? <Badge>{project.status}</Badge> : null}
-              <Button asChild size="sm">
-                <Link href="/projects">Novo Projeto</Link>
-              </Button>
+              {user ? <Badge>{user.role === "admin" ? "ADMIN" : "VIEWER"}</Badge> : null}
+              {canCreateProject ? (
+                <Button asChild size="sm">
+                  <Link href="/projects">Criar Projeto</Link>
+                </Button>
+              ) : null}
               {project ? (
                 <Button asChild variant="outline" size="sm">
                   <Link href={`/projects/${project.id}`}>Visão geral</Link>
                 </Button>
               ) : null}
+              <Button asChild variant="outline" size="sm">
+                <Link href="/logout" prefetch={false}>Sair</Link>
+              </Button>
             </div>
           </div>
         </header>
