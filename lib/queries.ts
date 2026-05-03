@@ -29,7 +29,7 @@ export async function getProjectForModule(projectId?: string) {
 }
 
 export type SearchProps = {
-  searchParams?: Promise<{ projectId?: string }> | { projectId?: string };
+  searchParams: Promise<{ projectId?: string }>;
 };
 
 export async function readProjectId(searchParams?: SearchProps["searchParams"]) {

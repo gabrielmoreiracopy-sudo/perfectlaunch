@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   description: "Planejamento e execução de lançamentos digitais."
 };
 
+export const dynamic = "force-dynamic";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR">
