@@ -23,6 +23,7 @@ model Project {
   openCartDate  DateTime?
   closeCartDate DateTime?
   createdAt     DateTime @default(now())
+  launchSetupCompleted Boolean @default(false)
 
   strategy      Strategy?
   offer         Offer?

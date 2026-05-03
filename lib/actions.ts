@@ -7,6 +7,11 @@ import { prisma } from "@/lib/db";
 import { assertAdmin } from "@/lib/auth";
 import { toDate, toNumber, toText } from "@/lib/utils";
 
+const DEFAULT_PROJECT_NAME = "Projeto sem nome";
+const DEFAULT_PROJECT_EXPERT = "Expert a definir";
+const DEFAULT_LAUNCH_TYPE = "Clássico";
+const DEFAULT_PROJECT_PRODUCT = "Oferta a definir";
+
 function projectId(formData: FormData) {
   return toText(formData.get("projectId"));
 }
@@ -14,15 +19,21 @@ function projectId(formData: FormData) {
 export async function createProject(formData: FormData) {
   await assertAdmin();
 
-  const project = await prisma.project.create({
+  const name = toText(formData.get("name")) || DEFAULT_PROJECT_NAME;
+  const expert = toText(formData.get("expert")) || DEFAULT_PROJECT_EXPERT;
+  const launchType = toText(formData.get("launchType")) || DEFAULT_LAUNCH_TYPE;
+  const logoUrl = toText(formData.get("logoUrl"));
+
+  await prisma.project.create({
     data: {
-      name: toText(formData.get("name")),
-      expert: toText(formData.get("expert")),
-      product: toText(formData.get("product")),
-      launchType: toText(formData.get("launchType")),
-      logoUrl: toText(formData.get("logoUrl")),
+      name,
+      expert,
+      product: toText(formData.get("product")) || DEFAULT_PROJECT_PRODUCT,
+      launchType,
+      logoUrl,
       notes: toText(formData.get("notes")),
       status: toText(formData.get("status")) || "Pendente",
+      launchSetupCompleted: false,
       revenueGoal: toNumber(formData.get("revenueGoal")),
       leadsGoal: Math.round(toNumber(formData.get("leadsGoal"))),
       budget: toNumber(formData.get("budget")),

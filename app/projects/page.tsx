@@ -18,13 +18,45 @@ type ProjectCardData = typeof demoProject & {
 function getVisibleProjects(projects: ProjectCardData[], user: Awaited<ReturnType<typeof getCurrentUser>>) {
   if (user?.role !== "viewer") return projects;
   const allowedNames = user.allowedProjectNames || [];
-  return projects.filter((project) => allowedNames.includes(project.name));
+  return projects.filter((project) => allowedNames.includes(project.name || ""));
+}
+
+function safeText(value: unknown, fallback: string) {
+  return typeof value === "string" && value.trim() ? value.trim() : fallback;
+}
+
+function safeNumber(value: unknown) {
+  return typeof value === "number" && Number.isFinite(value) ? value : 0;
+}
+
+function initialsFromName(name: string) {
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  const letters = words.length > 1 ? `${words[0][0]}${words[1][0]}` : words[0]?.slice(0, 2);
+  return (letters || "LP").toUpperCase();
+}
+
+function normalizeProject(project: Partial<ProjectCardData>) {
+  const name = safeText(project.name, "Projeto sem nome");
+
+  return {
+    id: safeText(project.id, "demo-project"),
+    name,
+    initials: initialsFromName(name),
+    expert: safeText(project.expert, "Expert a definir"),
+    product: safeText(project.product, "Oferta a definir"),
+    launchType: safeText(project.launchType, "Lançamento a definir"),
+    logoUrl: safeText(project.logoUrl, ""),
+    status: safeText(project.status, "Pendente"),
+    revenueGoal: safeNumber(project.revenueGoal),
+    openCartDate: project.openCartDate || null
+  };
 }
 
 export default async function ProjectsPage() {
   const user = await getCurrentUser();
-  const projects = await prisma.project.findMany({ orderBy: { createdAt: "desc" } }).catch(() => [demoProject]);
-  const visibleProjects = getVisibleProjects(projects as ProjectCardData[], user);
+  const loadedProjects = await prisma.project.findMany({ orderBy: { createdAt: "desc" } }).catch(() => [demoProject]);
+  const projects = Array.isArray(loadedProjects) ? loadedProjects : [];
+  const visibleProjects = getVisibleProjects(projects as ProjectCardData[], user).map(normalizeProject);
   const isAdmin = user?.role === "admin";
 
   return (
@@ -63,7 +95,6 @@ export default async function ProjectsPage() {
         {visibleProjects.length ? (
           <div className="grid gap-5 xl:grid-cols-2">
             {visibleProjects.map((project) => {
-              const initial = project.name?.trim().charAt(0).toUpperCase() || "L";
               const ctaLabel = isAdmin ? "Abrir projeto" : "Visualizar projeto";
 
               return (
@@ -75,7 +106,7 @@ export default async function ProjectsPage() {
                           {project.logoUrl ? (
                             <img alt={`Logo de ${project.name}`} className="h-full w-full object-cover" src={project.logoUrl} />
                           ) : (
-                            initial
+                            project.initials
                           )}
                         </div>
                         <div className="min-w-0">

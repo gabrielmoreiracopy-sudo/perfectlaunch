@@ -5,16 +5,18 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatCurrency(value: number) {
+export function formatCurrency(value?: number | null) {
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL"
-  }).format(value || 0);
+  }).format(typeof value === "number" && Number.isFinite(value) ? value : 0);
 }
 
-export function formatDate(value?: Date | null) {
+export function formatDate(value?: Date | string | null) {
   if (!value) return "Sem data";
-  return new Intl.DateTimeFormat("pt-BR", { dateStyle: "short" }).format(value);
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return "Sem data";
+  return new Intl.DateTimeFormat("pt-BR", { dateStyle: "short" }).format(date);
 }
 
 export function toDate(value: FormDataEntryValue | null) {
