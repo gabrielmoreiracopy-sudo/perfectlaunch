@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id            String   @id @default(cuid())
+  name          String
+  expert        String
+  product       String
+  launchType    String
+  status        String   @default("Pendente")
+  revenueGoal   Float    @default(0)
+  leadsGoal     Int      @default(0)
+  budget        Float    @default(0)
+  startDate     DateTime?
+  openCartDate  DateTime?
+  closeCartDate DateTime?
+  createdAt     DateTime @default(now())
+
+  strategy      Strategy?
+  offer         Offer?
+  contents      Content[]
+  creatives     Creative[]
+  pages         Page[]
+  trackingLinks TrackingLink[]
+  messages      Message[]
+  leads         Lead[]
+  files         FileLink[]
+}
+
+model Strategy {
+  id         String  @id @default(cuid())
+  projectId  String  @unique
+  niche      String  @default("")
+  avatar     String  @default("")
+  pains      String  @default("")
+  desires    String  @default("")
+  objections String  @default("")
+  promise    String  @default("")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Offer {
+  id           String @id @default(cuid())
+  projectId    String @unique
+  name         String @default("")
+  deliverables String @default("")
+  bonuses      String @default("")
+  price        Float  @default(0)
+  guarantee    String @default("")
+  mechanism    String @default("")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Content {
+  id        String @id @default(cuid())
+  projectId String
+  type      String
+  objective String @default("")
+  script    String @default("")
+  cta       String @default("")
+  status    String @default("Pendente")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Creative {
+  id        String @id @default(cuid())
+  projectId String
+  name      String
+  platform  String @default("")
+  format    String @default("")
+  angle     String @default("")
+  hook      String @default("")
+  copy      String @default("")
+  link      String @default("")
+  status    String @default("Pendente")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Page {
+  id        String @id @default(cuid())
+  projectId String
+  name      String
+  url       String @default("")
+  status    String @default("Pendente")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model TrackingLink {
+  id          String @id @default(cuid())
+  projectId   String
+  name        String
+  url         String @default("")
+  utmSource   String @default("")
+  utmMedium   String @default("")
+  utmCampaign String @default("")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  projectId String
+  channel   String
+  phase     String   @default("")
+  objective String   @default("")
+  content   String   @default("")
+  cta       String   @default("")
+  link      String   @default("")
+  sendDate  DateTime?
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Lead {
+  id          String @id @default(cuid())
+  projectId   String
+  name        String
+  contact     String @default("")
+  status      String @default("novo")
+  temperature String @default("")
+  objection   String @default("")
+  notes       String @default("")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model FileLink {
+  id          String @id @default(cuid())
+  projectId   String
+  name        String
+  type        String @default("")
+  url         String @default("")
+  description String @default("")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
