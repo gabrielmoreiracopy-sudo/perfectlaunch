@@ -6,13 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageTitle } from "@/components/page-title";
 import { prisma } from "@/lib/db";
+import { demoProjectFull } from "@/lib/demo-data";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 export default async function DashboardPage() {
-  const projects = await prisma.project.findMany({
-    orderBy: { createdAt: "desc" },
-    include: { contents: true, creatives: true, leads: true }
-  });
+  const projects = await prisma.project
+    .findMany({
+      orderBy: { createdAt: "desc" },
+      include: { contents: true, creatives: true, leads: true }
+    })
+    .catch(() => [demoProjectFull]);
 
   const activeProjects = projects.filter((project) => project.status !== "Concluído").length;
   const revenueGoal = projects.reduce((sum, project) => sum + project.revenueGoal, 0);

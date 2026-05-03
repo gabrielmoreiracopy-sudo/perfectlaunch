@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { deleteProject, updateProject } from "@/lib/actions";
 import { prisma } from "@/lib/db";
+import { demoProjectFull } from "@/lib/demo-data";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 function dateValue(value?: Date | null) {
@@ -18,17 +19,19 @@ function dateValue(value?: Date | null) {
 
 export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const project = await prisma.project.findUnique({
-    where: { id },
-    include: {
-      contents: true,
-      creatives: true,
-      pages: true,
-      messages: true,
-      leads: true,
-      files: true
-    }
-  });
+  const project = await prisma.project
+    .findUnique({
+      where: { id },
+      include: {
+        contents: true,
+        creatives: true,
+        pages: true,
+        messages: true,
+        leads: true,
+        files: true
+      }
+    })
+    .catch(() => demoProjectFull);
 
   if (!project) notFound();
 

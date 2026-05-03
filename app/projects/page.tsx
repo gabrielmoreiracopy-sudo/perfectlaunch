@@ -9,10 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { createProject } from "@/lib/actions";
 import { prisma } from "@/lib/db";
+import { demoProject } from "@/lib/demo-data";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 export default async function ProjectsPage() {
-  const projects = await prisma.project.findMany({ orderBy: { createdAt: "desc" } });
+  const projects = await prisma.project.findMany({ orderBy: { createdAt: "desc" } }).catch(() => [demoProject]);
 
   return (
     <AppShell>

@@ -16,7 +16,7 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { prisma } from "@/lib/db";
+import { getActiveProject } from "@/lib/queries";
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: BarChart3 },
@@ -32,7 +32,7 @@ const navItems = [
 ];
 
 export async function AppShell({ children }: { children: React.ReactNode }) {
-  const project = await prisma.project.findFirst({ orderBy: { createdAt: "desc" } });
+  const project = await getActiveProject();
 
   return (
     <div className="min-h-screen">
