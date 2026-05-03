@@ -21,16 +21,16 @@ export function ProjectCreateModal() {
       </Button>
 
       {open ? (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/70 px-4 py-8 backdrop-blur-md">
-          <section className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-lg border border-border bg-card p-6 text-card-foreground shadow-premium">
+        <div className="fixed inset-0 z-50 grid place-items-center bg-luxury-black/80 px-4 py-8 backdrop-blur-md">
+          <section className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-lg border border-luxury-goldBorder/45 bg-card p-7 text-card-foreground shadow-premium">
             <div className="mb-6 flex items-start justify-between gap-4">
               <div>
-                <h2 className="text-2xl font-semibold">Criar novo projeto</h2>
+                <h2 className="text-3xl font-semibold">Criar novo projeto</h2>
                 <p className="mt-1 text-sm text-muted-foreground">Configure a base do lançamento para começar a operação.</p>
               </div>
               <button
                 aria-label="Fechar modal"
-                className="rounded-md p-2 text-muted-foreground transition hover:bg-secondary hover:text-foreground"
+                className="rounded-md p-2 text-muted-foreground transition hover:bg-luxury-elevated hover:text-primary"
                 type="button"
                 onClick={() => setOpen(false)}
               >
@@ -63,7 +63,7 @@ export function ProjectCreateModal() {
                 <Textarea id="notes" name="notes" />
               </div>
 
-              <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">
+              <div className="flex flex-col-reverse gap-3 border-t border-luxury-border pt-5 sm:flex-row sm:justify-end">
                 <Button type="button" variant="outline" onClick={() => setOpen(false)}>
                   Cancelar
                 </Button>

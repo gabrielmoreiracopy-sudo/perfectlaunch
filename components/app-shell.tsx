@@ -4,7 +4,6 @@ import {
   BarChart3,
   FileText,
   Flag,
-  FolderKanban,
   Megaphone,
   MessageSquare,
   Package,
@@ -19,44 +18,51 @@ import { getCurrentUser } from "@/lib/auth";
 import { getActiveProject } from "@/lib/queries";
 
 const navItems = [
-  { href: "/", label: "Dashboard", icon: BarChart3 },
-  { href: "/projects", label: "Projetos", icon: FolderKanban },
-  { href: "/strategy", label: "Estratégia", icon: Target },
-  { href: "/offer", label: "Oferta", icon: Package },
-  { href: "/content", label: "Conteúdo", icon: FileText },
-  { href: "/acquisition", label: "Aquisição", icon: Megaphone },
-  { href: "/funnel", label: "Funil", icon: Route },
-  { href: "/communication", label: "Comunicação", icon: MessageSquare },
-  { href: "/recovery", label: "Recuperação", icon: Users },
-  { href: "/files", label: "Arquivos", icon: Archive }
+  { path: "", label: "Dashboard do projeto", icon: BarChart3 },
+  { path: "estrategia", label: "Estratégia", icon: Target },
+  { path: "oferta", label: "Oferta", icon: Package },
+  { path: "conteudo", label: "Conteúdo", icon: FileText },
+  { path: "aquisicao", label: "Aquisição", icon: Megaphone },
+  { path: "funil", label: "Funil", icon: Route },
+  { path: "comunicacao", label: "Comunicação", icon: MessageSquare },
+  { path: "recuperacao", label: "Recuperação", icon: Users },
+  { path: "arquivos", label: "Arquivos", icon: Archive }
 ];
 
-export async function AppShell({ children }: { children: React.ReactNode }) {
+export async function AppShell({
+  children,
+  projectId
+}: {
+  children: React.ReactNode;
+  projectId?: string;
+}) {
   const user = await getCurrentUser();
-  const project = await getActiveProject();
-  const canCreateProject = user?.role === "admin";
+  const project = await getActiveProject(projectId);
+  const projectBasePath = project ? `/project/${project.id}` : "/projects";
 
   return (
     <div className="min-h-screen text-foreground">
-      <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 border-r border-border bg-card/95 px-4 py-5 shadow-premium backdrop-blur md:block">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-glow">
+      <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 border-r border-luxury-border bg-luxury-night/95 px-4 py-6 shadow-premium backdrop-blur md:block">
+        <Link href="/projects" className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-luxury-goldBorder bg-luxury-elevated text-primary shadow-glow">
             <Flag className="h-5 w-5" />
           </div>
           <div>
-            <p className="font-serif text-base font-semibold leading-tight">Lançamento Perfeito</p>
+            <p className="font-serif text-lg font-semibold leading-tight">Lançamento Perfeito</p>
             <p className="text-xs text-muted-foreground">Hub premium de lançamentos</p>
           </div>
         </Link>
 
-        <nav className="mt-8 space-y-1">
+        <nav className="mt-10 space-y-1.5">
           {navItems.map((item) => {
             const Icon = item.icon;
+            const href = item.path ? `${projectBasePath}/${item.path}` : projectBasePath;
+
             return (
               <Link
-                key={item.href}
-                href={project && item.href !== "/" && item.href !== "/projects" ? `${item.href}?projectId=${project.id}` : item.href}
-                className="flex items-center gap-3 rounded-md border border-transparent px-3 py-2 text-sm text-muted-foreground transition hover:border-border hover:bg-secondary hover:text-foreground"
+                key={item.path || "dashboard"}
+                href={href}
+                className="flex items-center gap-3 rounded-md border border-transparent px-3 py-2.5 text-sm text-muted-foreground transition hover:border-luxury-goldBorder/60 hover:bg-luxury-elevated hover:text-primary"
               >
                 <Icon className="h-4 w-4" />
                 {item.label}
@@ -67,32 +73,27 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       <div className="md:pl-64">
-        <header className="sticky top-0 z-10 border-b border-border bg-background/88 backdrop-blur-xl">
-          <div className="flex min-h-16 flex-wrap items-center justify-between gap-3 px-5 py-3">
+        <header className="sticky top-0 z-10 border-b border-luxury-border bg-luxury-black/88 backdrop-blur-xl">
+          <div className="flex min-h-16 flex-wrap items-center justify-between gap-3 px-6 py-3.5">
             <div>
-              <p className="text-xs font-medium uppercase text-muted-foreground">Projeto ativo</p>
-              <h1 className="text-xl font-semibold">{project?.name ?? "Nenhum projeto criado"}</h1>
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">Projeto ativo</p>
+              <h1 className="text-2xl font-semibold">{project?.name ?? "Nenhum projeto selecionado"}</h1>
             </div>
             <div className="flex items-center gap-2">
               {project ? <Badge>{project.status}</Badge> : null}
               {user ? <Badge>{user.role === "admin" ? "ADMIN" : "VIEWER"}</Badge> : null}
-              {canCreateProject ? (
-                <Button asChild size="sm">
-                  <Link href="/projects">Criar Projeto</Link>
-                </Button>
-              ) : null}
-              {project ? (
-                <Button asChild variant="outline" size="sm">
-                  <Link href={`/projects/${project.id}`}>Visão geral</Link>
-                </Button>
-              ) : null}
               <Button asChild variant="outline" size="sm">
-                <Link href="/logout" prefetch={false}>Sair</Link>
+                <Link href="/projects">Voltar para projetos</Link>
+              </Button>
+              <Button asChild variant="outline" size="sm">
+                <Link href="/logout" prefetch={false}>
+                  Sair
+                </Link>
               </Button>
             </div>
           </div>
         </header>
-        <main className="px-5 py-7">{children}</main>
+        <main className="px-6 py-9">{children}</main>
       </div>
     </div>
   );

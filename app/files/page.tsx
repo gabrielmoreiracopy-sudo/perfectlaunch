@@ -11,7 +11,7 @@ export default async function FilesPage({ searchParams }: SearchProps) {
   const project = await getProjectForModule(await readProjectId(searchParams));
 
   return (
-    <AppShell>
+    <AppShell projectId={project?.id}>
       <PageTitle title="Arquivos" description="Links rápidos para documentos, roteiros, páginas e materiais." />
       {!project ? (
         <EmptyState />

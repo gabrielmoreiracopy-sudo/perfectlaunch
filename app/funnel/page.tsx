@@ -19,7 +19,7 @@ export default async function FunnelPage({ searchParams }: SearchProps) {
   const project = await getProjectForModule(await readProjectId(searchParams));
 
   return (
-    <AppShell>
+    <AppShell projectId={project?.id}>
       <PageTitle title="Funil" description="Controle páginas principais e gere links com UTM." />
       {!project ? (
         <EmptyState />

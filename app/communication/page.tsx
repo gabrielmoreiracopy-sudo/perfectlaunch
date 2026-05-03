@@ -17,7 +17,7 @@ export default async function CommunicationPage({ searchParams }: SearchProps) {
   const project = await getProjectForModule(await readProjectId(searchParams));
 
   return (
-    <AppShell>
+    <AppShell projectId={project?.id}>
       <PageTitle title="Comunicação" description="Planeje emails e mensagens de WhatsApp por fase da campanha." />
       {!project ? (
         <EmptyState />

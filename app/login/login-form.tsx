@@ -46,13 +46,13 @@ export function LoginForm() {
 
   return (
     <main className="grid min-h-screen place-items-center px-5 py-10">
-      <section className="w-full max-w-md rounded-lg border border-border bg-card p-7 text-card-foreground shadow-premium">
+      <section className="w-full max-w-md rounded-lg border border-luxury-border bg-card p-8 text-card-foreground shadow-premium">
         <div className="mb-8 flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-glow">
+          <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-luxury-goldBorder bg-luxury-elevated text-primary shadow-glow">
             <Flag className="h-5 w-5" />
           </div>
           <div>
-            <h1 className="text-2xl font-semibold leading-tight">Lançamento Perfeito</h1>
+            <h1 className="text-3xl font-semibold leading-tight">Lançamento Perfeito</h1>
             <p className="mt-1 text-sm text-muted-foreground">Acesse seu painel de projetos.</p>
           </div>
         </div>
@@ -69,7 +69,7 @@ export function LoginForm() {
 
           <label className="flex items-center gap-2 text-sm text-muted-foreground">
             <input
-              className="h-4 w-4 rounded border-border bg-background accent-sky-500"
+              className="h-4 w-4 rounded border-border bg-background accent-luxury-gold"
               name="remember"
               type="checkbox"
             />

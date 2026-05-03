@@ -12,7 +12,7 @@ export default async function StrategyPage({ searchParams }: SearchProps) {
   const strategy = project?.strategy;
 
   return (
-    <AppShell>
+    <AppShell projectId={project?.id}>
       <PageTitle title="Estratégia" description="Clareza de mercado, avatar, objeções e promessa ROMA." />
       {!project ? (
         <EmptyState />

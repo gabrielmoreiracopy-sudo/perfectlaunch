@@ -15,7 +15,7 @@ export default async function ContentPage({ searchParams }: SearchProps) {
   const project = await getProjectForModule(await readProjectId(searchParams));
 
   return (
-    <AppShell>
+    <AppShell projectId={project?.id}>
       <PageTitle title="Conteúdo" description="Planeje CPL1, CPL2, CPL3 e VSL com objetivo, roteiro e chamada." />
       {!project ? (
         <EmptyState />

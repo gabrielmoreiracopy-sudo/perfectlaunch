@@ -17,12 +17,18 @@ const config: Config = {
     },
     extend: {
       colors: {
-        ink: {
-          950: "#0F172A",
-          900: "#111827",
-          800: "#1F2937",
-          200: "#E5E7EB",
-          400: "#9CA3AF"
+        luxury: {
+          black: "#050505",
+          night: "#0B0A08",
+          card: "#11100D",
+          elevated: "#16130E",
+          border: "#2A2418",
+          goldBorder: "#8A6A2F",
+          gold: "#C9A24A",
+          goldDark: "#8B6F32",
+          text: "#F5F0E6",
+          secondary: "#A8A29A",
+          muted: "#6F6A61"
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -64,8 +70,8 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)"
       },
       boxShadow: {
-        premium: "0 18px 60px rgba(0, 0, 0, 0.28)",
-        glow: "0 0 0 1px rgba(59, 130, 246, 0.12), 0 18px 50px rgba(14, 165, 233, 0.08)"
+        premium: "0 24px 70px rgba(0, 0, 0, 0.42)",
+        glow: "0 0 0 1px rgba(201, 162, 74, 0.18), 0 18px 50px rgba(201, 162, 74, 0.08)"
       }
     }
   },

@@ -13,7 +13,7 @@ export default async function RecoveryPage({ searchParams }: SearchProps) {
   const project = await getProjectForModule(await readProjectId(searchParams));
 
   return (
-    <AppShell>
+    <AppShell projectId={project?.id}>
       <PageTitle title="Recuperação" description="Acompanhe leads, conversas, objeções e fechamento." />
       {!project ? (
         <EmptyState />

@@ -13,7 +13,7 @@ export default async function AcquisitionPage({ searchParams }: SearchProps) {
   const project = await getProjectForModule(await readProjectId(searchParams));
 
   return (
-    <AppShell>
+    <AppShell projectId={project?.id}>
       <PageTitle title="Aquisição" description="Organize criativos, ângulos, hooks e links de tráfego." />
       {!project ? (
         <EmptyState />

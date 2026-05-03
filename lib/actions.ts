@@ -66,6 +66,7 @@ export async function updateProject(formData: FormData) {
   });
   revalidatePath("/");
   revalidatePath("/projects");
+  revalidatePath(`/project/${id}`);
 }
 
 export async function deleteProject(formData: FormData) {
@@ -102,6 +103,7 @@ export async function upsertStrategy(formData: FormData) {
     }
   });
   revalidatePath("/strategy");
+  revalidatePath(`/project/${id}/estrategia`);
 }
 
 export async function upsertOffer(formData: FormData) {
@@ -129,11 +131,16 @@ export async function upsertOffer(formData: FormData) {
     }
   });
   revalidatePath("/offer");
+  revalidatePath(`/project/${id}/oferta`);
 }
 
 export async function saveContent(formData: FormData) {
   await assertAdmin();
 
+  const content = await prisma.content.findUnique({
+    where: { id: toText(formData.get("id")) },
+    select: { projectId: true }
+  });
   await prisma.content.update({
     where: { id: toText(formData.get("id")) },
     data: {
@@ -144,6 +151,7 @@ export async function saveContent(formData: FormData) {
     }
   });
   revalidatePath("/content");
+  if (content?.projectId) revalidatePath(`/project/${content.projectId}/conteudo`);
 }
 
 export async function createCreative(formData: FormData) {
@@ -163,11 +171,16 @@ export async function createCreative(formData: FormData) {
     }
   });
   revalidatePath("/acquisition");
+  revalidatePath(`/project/${projectId(formData)}/aquisicao`);
 }
 
 export async function updateCreative(formData: FormData) {
   await assertAdmin();
 
+  const creative = await prisma.creative.findUnique({
+    where: { id: toText(formData.get("id")) },
+    select: { projectId: true }
+  });
   await prisma.creative.update({
     where: { id: toText(formData.get("id")) },
     data: {
@@ -182,6 +195,7 @@ export async function updateCreative(formData: FormData) {
     }
   });
   revalidatePath("/acquisition");
+  if (creative?.projectId) revalidatePath(`/project/${creative.projectId}/aquisicao`);
 }
 
 export async function createPage(formData: FormData) {
@@ -196,11 +210,16 @@ export async function createPage(formData: FormData) {
     }
   });
   revalidatePath("/funnel");
+  revalidatePath(`/project/${projectId(formData)}/funil`);
 }
 
 export async function updatePage(formData: FormData) {
   await assertAdmin();
 
+  const page = await prisma.page.findUnique({
+    where: { id: toText(formData.get("id")) },
+    select: { projectId: true }
+  });
   await prisma.page.update({
     where: { id: toText(formData.get("id")) },
     data: {
@@ -210,6 +229,7 @@ export async function updatePage(formData: FormData) {
     }
   });
   revalidatePath("/funnel");
+  if (page?.projectId) revalidatePath(`/project/${page.projectId}/funil`);
 }
 
 export async function createTrackingLink(formData: FormData) {
@@ -226,11 +246,16 @@ export async function createTrackingLink(formData: FormData) {
     }
   });
   revalidatePath("/funnel");
+  revalidatePath(`/project/${projectId(formData)}/funil`);
 }
 
 export async function updateTrackingLink(formData: FormData) {
   await assertAdmin();
 
+  const trackingLink = await prisma.trackingLink.findUnique({
+    where: { id: toText(formData.get("id")) },
+    select: { projectId: true }
+  });
   await prisma.trackingLink.update({
     where: { id: toText(formData.get("id")) },
     data: {
@@ -242,6 +267,7 @@ export async function updateTrackingLink(formData: FormData) {
     }
   });
   revalidatePath("/funnel");
+  if (trackingLink?.projectId) revalidatePath(`/project/${trackingLink.projectId}/funil`);
 }
 
 export async function createMessage(formData: FormData) {
@@ -260,11 +286,16 @@ export async function createMessage(formData: FormData) {
     }
   });
   revalidatePath("/communication");
+  revalidatePath(`/project/${projectId(formData)}/comunicacao`);
 }
 
 export async function updateMessage(formData: FormData) {
   await assertAdmin();
 
+  const message = await prisma.message.findUnique({
+    where: { id: toText(formData.get("id")) },
+    select: { projectId: true }
+  });
   await prisma.message.update({
     where: { id: toText(formData.get("id")) },
     data: {
@@ -278,6 +309,7 @@ export async function updateMessage(formData: FormData) {
     }
   });
   revalidatePath("/communication");
+  if (message?.projectId) revalidatePath(`/project/${message.projectId}/comunicacao`);
 }
 
 export async function createLead(formData: FormData) {
@@ -295,11 +327,16 @@ export async function createLead(formData: FormData) {
     }
   });
   revalidatePath("/recovery");
+  revalidatePath(`/project/${projectId(formData)}/recuperacao`);
 }
 
 export async function updateLead(formData: FormData) {
   await assertAdmin();
 
+  const lead = await prisma.lead.findUnique({
+    where: { id: toText(formData.get("id")) },
+    select: { projectId: true }
+  });
   await prisma.lead.update({
     where: { id: toText(formData.get("id")) },
     data: {
@@ -312,6 +349,7 @@ export async function updateLead(formData: FormData) {
     }
   });
   revalidatePath("/recovery");
+  if (lead?.projectId) revalidatePath(`/project/${lead.projectId}/recuperacao`);
 }
 
 export async function createFileLink(formData: FormData) {
@@ -327,11 +365,16 @@ export async function createFileLink(formData: FormData) {
     }
   });
   revalidatePath("/files");
+  revalidatePath(`/project/${projectId(formData)}/arquivos`);
 }
 
 export async function updateFileLink(formData: FormData) {
   await assertAdmin();
 
+  const fileLink = await prisma.fileLink.findUnique({
+    where: { id: toText(formData.get("id")) },
+    select: { projectId: true }
+  });
   await prisma.fileLink.update({
     where: { id: toText(formData.get("id")) },
     data: {
@@ -342,6 +385,7 @@ export async function updateFileLink(formData: FormData) {
     }
   });
   revalidatePath("/files");
+  if (fileLink?.projectId) revalidatePath(`/project/${fileLink.projectId}/arquivos`);
 }
 
 export async function deleteRecord(formData: FormData) {
@@ -349,13 +393,45 @@ export async function deleteRecord(formData: FormData) {
 
   const model = toText(formData.get("model"));
   const id = toText(formData.get("id"));
+  let relatedProjectId = "";
 
-  if (model === "creative") await prisma.creative.delete({ where: { id } });
-  if (model === "page") await prisma.page.delete({ where: { id } });
-  if (model === "trackingLink") await prisma.trackingLink.delete({ where: { id } });
-  if (model === "message") await prisma.message.delete({ where: { id } });
-  if (model === "lead") await prisma.lead.delete({ where: { id } });
-  if (model === "fileLink") await prisma.fileLink.delete({ where: { id } });
+  if (model === "creative") {
+    const record = await prisma.creative.findUnique({ where: { id }, select: { projectId: true } });
+    relatedProjectId = record?.projectId || "";
+    await prisma.creative.delete({ where: { id } });
+  }
+  if (model === "page") {
+    const record = await prisma.page.findUnique({ where: { id }, select: { projectId: true } });
+    relatedProjectId = record?.projectId || "";
+    await prisma.page.delete({ where: { id } });
+  }
+  if (model === "trackingLink") {
+    const record = await prisma.trackingLink.findUnique({ where: { id }, select: { projectId: true } });
+    relatedProjectId = record?.projectId || "";
+    await prisma.trackingLink.delete({ where: { id } });
+  }
+  if (model === "message") {
+    const record = await prisma.message.findUnique({ where: { id }, select: { projectId: true } });
+    relatedProjectId = record?.projectId || "";
+    await prisma.message.delete({ where: { id } });
+  }
+  if (model === "lead") {
+    const record = await prisma.lead.findUnique({ where: { id }, select: { projectId: true } });
+    relatedProjectId = record?.projectId || "";
+    await prisma.lead.delete({ where: { id } });
+  }
+  if (model === "fileLink") {
+    const record = await prisma.fileLink.findUnique({ where: { id }, select: { projectId: true } });
+    relatedProjectId = record?.projectId || "";
+    await prisma.fileLink.delete({ where: { id } });
+  }
 
   revalidatePath("/");
+  if (relatedProjectId) {
+    revalidatePath(`/project/${relatedProjectId}/aquisicao`);
+    revalidatePath(`/project/${relatedProjectId}/funil`);
+    revalidatePath(`/project/${relatedProjectId}/comunicacao`);
+    revalidatePath(`/project/${relatedProjectId}/recuperacao`);
+    revalidatePath(`/project/${relatedProjectId}/arquivos`);
+  }
 }

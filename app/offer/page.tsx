@@ -12,7 +12,7 @@ export default async function OfferPage({ searchParams }: SearchProps) {
   const offer = project?.offer;
 
   return (
-    <AppShell>
+    <AppShell projectId={project?.id}>
       <PageTitle title="Oferta" description="Estruture entregáveis, bônus, preço, garantia e mecanismo." />
       {!project ? (
         <EmptyState />
