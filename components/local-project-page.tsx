@@ -32,8 +32,8 @@ export function LocalProjectPage({ projectId }: { projectId: string }) {
   if (!loaded) return null;
   if (!project) return null;
 
-  function deleteLocalProject() {
-    if (!window.confirm("Tem certeza que deseja excluir este projeto?")) return;
+  function archiveLocalProject() {
+    if (!window.confirm("Tem certeza que deseja arquivar este projeto?")) return;
 
     router.replace("/projects");
     const projects = readProjects().map((item) => (item.id === projectId ? { ...item, archived: true } : item));
@@ -76,12 +76,12 @@ export function LocalProjectPage({ projectId }: { projectId: string }) {
 
         <Card className="mt-6">
           <CardHeader>
-            <CardTitle>Excluir projeto</CardTitle>
-            <CardDescription>Remove este projeto salvo localmente.</CardDescription>
+            <CardTitle>Arquivar projeto</CardTitle>
+            <CardDescription>Oculta este projeto da lista principal sem remover seus dados.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button type="button" variant="destructive" onClick={deleteLocalProject}>
-              Excluir
+            <Button type="button" variant="destructive" onClick={archiveLocalProject}>
+              Arquivar projeto
             </Button>
           </CardContent>
         </Card>

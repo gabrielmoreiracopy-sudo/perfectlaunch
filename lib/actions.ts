@@ -102,7 +102,7 @@ export async function updateProject(formData: FormData) {
   revalidatePath(`/project/${id}`);
 }
 
-export async function deleteProject(formData: FormData) {
+export async function archiveProject(formData: FormData) {
   await assertAdmin();
 
   const id = projectId(formData);
@@ -117,6 +117,26 @@ export async function deleteProject(formData: FormData) {
     revalidatePath(`/project/${id}`);
   } catch (error) {
     console.error("Falha ao arquivar projeto.", error);
+  }
+
+  redirect("/projects");
+}
+
+export async function restoreProject(formData: FormData) {
+  await assertAdmin();
+
+  const id = projectId(formData);
+
+  try {
+    await prisma.project.update({
+      where: { id },
+      data: { archived: false }
+    });
+    revalidatePath("/");
+    revalidatePath("/projects");
+    revalidatePath(`/project/${id}`);
+  } catch (error) {
+    console.error("Falha ao restaurar projeto.", error);
   }
 
   redirect("/projects");

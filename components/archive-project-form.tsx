@@ -3,13 +3,13 @@
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
-import { deleteProject } from "@/lib/actions";
+import { archiveProject } from "@/lib/actions";
 
-export function DeleteProjectForm({ projectId }: { projectId: string }) {
+export function ArchiveProjectForm({ projectId }: { projectId: string }) {
   const router = useRouter();
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    if (!window.confirm("Tem certeza que deseja excluir este projeto?")) {
+    if (!window.confirm("Tem certeza que deseja arquivar este projeto?")) {
       event.preventDefault();
       return;
     }
@@ -18,10 +18,10 @@ export function DeleteProjectForm({ projectId }: { projectId: string }) {
   }
 
   return (
-    <form action={deleteProject} onSubmit={handleSubmit}>
+    <form action={archiveProject} onSubmit={handleSubmit}>
       <input type="hidden" name="projectId" value={projectId} />
       <Button type="submit" variant="destructive">
-        Excluir
+        Arquivar projeto
       </Button>
     </form>
   );

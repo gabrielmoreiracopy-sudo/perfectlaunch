@@ -87,6 +87,7 @@ export function ProjectCreateModal() {
     }
 
     const project = normalizeProject({
+      id: `local-${crypto.randomUUID()}`,
       name,
       expert,
       launchType,

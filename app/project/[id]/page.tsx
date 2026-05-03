@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { AppShell } from "@/components/app-shell";
-import { DeleteProjectForm } from "@/components/delete-project-form";
+import { ArchiveProjectForm } from "@/components/archive-project-form";
 import { FormField } from "@/components/form-field";
 import { LocalProjectPage } from "@/components/local-project-page";
 import { PageTitle } from "@/components/page-title";
@@ -155,11 +155,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
           <Card>
             <CardHeader>
-              <CardTitle>Excluir projeto</CardTitle>
-              <CardDescription>Remove o lançamento e todos os dados relacionados.</CardDescription>
+              <CardTitle>Arquivar projeto</CardTitle>
+              <CardDescription>Oculta este projeto da lista principal sem remover seus dados.</CardDescription>
             </CardHeader>
             <CardContent>
-              <DeleteProjectForm projectId={project.id} />
+              <ArchiveProjectForm projectId={project.id} />
             </CardContent>
           </Card>
         </div>
