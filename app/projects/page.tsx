@@ -24,7 +24,7 @@ function getVisibleProjects(projects: ProjectCardData[], user: Awaited<ReturnTyp
 
 export default async function ProjectsPage() {
   const user = await getCurrentUser();
-  const loadedProjects = await prisma.project.findMany({ orderBy: { createdAt: "desc" } }).catch(() => [demoProject]);
+  const loadedProjects = await prisma.project.findMany({ where: { archived: false }, orderBy: { createdAt: "desc" } }).catch(() => [demoProject]);
   const projects = Array.isArray(loadedProjects) ? loadedProjects : [];
   const visibleProjects = getVisibleProjects(projects as ProjectCardData[], user).map((project) => normalizeProject(project));
   const isAdmin = user?.role === "admin";

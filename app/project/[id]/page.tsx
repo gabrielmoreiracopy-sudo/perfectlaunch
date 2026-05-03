@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { AppShell } from "@/components/app-shell";
+import { DeleteProjectForm } from "@/components/delete-project-form";
 import { FormField } from "@/components/form-field";
 import { LocalProjectPage } from "@/components/local-project-page";
 import { PageTitle } from "@/components/page-title";
@@ -9,7 +10,7 @@ import { StatusSelect } from "@/components/status-select";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { deleteProject, updateProject } from "@/lib/actions";
+import { updateProject } from "@/lib/actions";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { demoProjectFull } from "@/lib/demo-data";
@@ -23,8 +24,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const { id } = await params;
   const user = await getCurrentUser();
   const project = await prisma.project
-    .findUnique({
-      where: { id },
+    .findFirst({
+      where: { id, archived: false },
       include: {
         contents: true,
         creatives: true,
@@ -158,10 +159,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               <CardDescription>Remove o lançamento e todos os dados relacionados.</CardDescription>
             </CardHeader>
             <CardContent>
-              <form action={deleteProject}>
-                <input type="hidden" name="projectId" value={project.id} />
-                <Button type="submit" variant="destructive">Excluir</Button>
-              </form>
+              <DeleteProjectForm projectId={project.id} />
             </CardContent>
           </Card>
         </div>

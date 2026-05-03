@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import {
   Archive,
   BarChart3,
@@ -38,6 +39,9 @@ export async function AppShell({
 }) {
   const user = await getCurrentUser();
   const project = await getActiveProject(projectId);
+
+  if (projectId && !project) redirect("/projects");
+
   const projectBasePath = project ? `/project/${project.id}` : "/projects";
 
   return (

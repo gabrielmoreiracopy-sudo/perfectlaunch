@@ -12,11 +12,11 @@ export async function getActiveProject(projectId?: string) {
 
   try {
     if (projectId) {
-      const selected = await prisma.project.findUnique({ where: { id: projectId } });
+      const selected = await prisma.project.findFirst({ where: { id: projectId, archived: false } });
       if (selected && canViewProject(selected.name, user)) return selected;
       return null;
     }
-    const projects = await prisma.project.findMany({ orderBy: { createdAt: "desc" } });
+    const projects = await prisma.project.findMany({ where: { archived: false }, orderBy: { createdAt: "desc" } });
     return projects.find((project) => canViewProject(project.name, user)) || null;
   } catch {
     return canViewProject(demoProject.name, user) ? demoProject : null;
@@ -28,8 +28,8 @@ export async function getProjectForModule(projectId?: string) {
   if (!project) return null;
 
   try {
-    return await prisma.project.findUnique({
-      where: { id: project.id },
+    return await prisma.project.findFirst({
+      where: { id: project.id, archived: false },
       include: {
         strategy: true,
         offer: true,

@@ -33,10 +33,12 @@ export function LocalProjectPage({ projectId }: { projectId: string }) {
   if (!project) return null;
 
   function deleteLocalProject() {
-    const projects = readProjects().filter((item) => item.id !== projectId);
+    if (!window.confirm("Tem certeza que deseja excluir este projeto?")) return;
+
+    router.replace("/projects");
+    const projects = readProjects().map((item) => (item.id === projectId ? { ...item, archived: true } : item));
     localStorage.setItem(LOCAL_PROJECTS_KEY, JSON.stringify(projects));
     window.dispatchEvent(new Event("lp-projects-updated"));
-    router.replace("/projects");
   }
 
   return (

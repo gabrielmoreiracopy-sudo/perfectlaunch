@@ -9,7 +9,7 @@ export type NormalizedProject = {
   status: "Em andamento";
   createdAt: number;
   launchSetupCompleted: false;
-  archived: false;
+  archived: boolean;
   product: string;
   revenueGoal: number;
   openCartDate: string | null;
@@ -42,7 +42,7 @@ export function normalizeProject(project: unknown): NormalizedProject {
     status: "Em andamento",
     createdAt: normalizeDate(source.createdAt),
     launchSetupCompleted: false,
-    archived: false,
+    archived: source.archived === true,
     product: safeText(source.product, "Oferta a definir"),
     revenueGoal: safeNumber(source.revenueGoal),
     openCartDate: normalizeOptionalDate(source.openCartDate)
