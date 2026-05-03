@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 
 import { AppShell } from "@/components/app-shell";
 import { FormField } from "@/components/form-field";
+import { LocalProjectPage } from "@/components/local-project-page";
 import { PageTitle } from "@/components/page-title";
 import { StatusSelect } from "@/components/status-select";
 import { Badge } from "@/components/ui/badge";
@@ -35,8 +36,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     })
     .catch(() => demoProjectFull);
 
-  if (!project) notFound();
-  if (user?.role === "viewer" && !user.allowedProjectNames?.includes(project.name)) notFound();
+  if (!project) return <LocalProjectPage projectId={id} />;
+  if (user?.role === "viewer" && !user.allowedProjectNames?.includes(project.name)) redirect("/projects");
 
   const totalItems =
     project.contents.length +

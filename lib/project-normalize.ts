@@ -7,7 +7,7 @@ export type NormalizedProject = {
   launchType: string;
   logo: string | null;
   status: "Em andamento";
-  createdAt: string;
+  createdAt: number;
   launchSetupCompleted: false;
   archived: false;
   product: string;
@@ -56,12 +56,13 @@ export function getProjectInitials(name: string) {
 }
 
 function normalizeDate(value: unknown) {
-  if (value instanceof Date && !Number.isNaN(value.getTime())) return value.toISOString();
+  if (value instanceof Date && !Number.isNaN(value.getTime())) return value.getTime();
+  if (typeof value === "number" && Number.isFinite(value)) return value;
   if (typeof value === "string" && value.trim()) {
     const date = new Date(value);
-    if (!Number.isNaN(date.getTime())) return date.toISOString();
+    if (!Number.isNaN(date.getTime())) return date.getTime();
   }
-  return new Date().toISOString();
+  return Date.now();
 }
 
 function normalizeOptionalDate(value: unknown) {

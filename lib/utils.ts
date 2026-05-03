@@ -12,7 +12,7 @@ export function formatCurrency(value?: number | null) {
   }).format(typeof value === "number" && Number.isFinite(value) ? value : 0);
 }
 
-export function formatDate(value?: Date | string | null) {
+export function formatDate(value?: Date | string | number | null) {
   if (!value) return "Sem data";
   const date = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(date.getTime())) return "Sem data";

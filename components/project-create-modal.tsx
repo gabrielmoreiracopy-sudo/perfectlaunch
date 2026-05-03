@@ -92,7 +92,7 @@ export function ProjectCreateModal() {
       launchType,
       logo: logoPreview || null,
       status: "Em andamento",
-      createdAt: new Date().toISOString(),
+      createdAt: Date.now(),
       launchSetupCompleted: false,
       archived: false
     });
