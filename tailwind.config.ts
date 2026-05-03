@@ -17,6 +17,13 @@ const config: Config = {
     },
     extend: {
       colors: {
+        ink: {
+          950: "#0F172A",
+          900: "#111827",
+          800: "#1F2937",
+          200: "#E5E7EB",
+          400: "#9CA3AF"
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -47,10 +54,18 @@ const config: Config = {
           foreground: "hsl(var(--card-foreground))"
         }
       },
+      fontFamily: {
+        sans: ["var(--font-inter)", "Inter", "sans-serif"],
+        serif: ["var(--font-playfair)", "Playfair Display", "serif"]
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)"
+      },
+      boxShadow: {
+        premium: "0 18px 60px rgba(0, 0, 0, 0.28)",
+        glow: "0 0 0 1px rgba(59, 130, 246, 0.12), 0 18px 50px rgba(14, 165, 233, 0.08)"
       }
     }
   },

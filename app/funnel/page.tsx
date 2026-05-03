@@ -32,7 +32,7 @@ export default async function FunnelPage({ searchParams }: SearchProps) {
             </CardHeader>
             <CardContent className="space-y-4">
               {project.pages.map((page) => (
-                <div key={page.id} className="rounded-md border p-3">
+                <div key={page.id} className="rounded-md border border-border bg-background/35 p-3">
                   <form action={updatePage} className="space-y-3">
                     <input type="hidden" name="id" value={page.id} />
                     <div className="grid gap-3 md:grid-cols-[1fr_1fr_160px_auto]">
@@ -57,7 +57,7 @@ export default async function FunnelPage({ searchParams }: SearchProps) {
                   </div>
                 </div>
               ))}
-              <form action={createPage} className="grid gap-3 border-t pt-4 md:grid-cols-[1fr_1fr_160px_auto]">
+              <form action={createPage} className="grid gap-3 border-t border-border pt-4 md:grid-cols-[1fr_1fr_160px_auto]">
                 <input type="hidden" name="projectId" value={project.id} />
                 <FormField name="name" label="Nome" placeholder="Captura" />
                 <FormField name="url" label="URL" />
@@ -79,7 +79,7 @@ export default async function FunnelPage({ searchParams }: SearchProps) {
             </CardHeader>
             <CardContent className="space-y-4">
               {project.trackingLinks.map((link) => (
-                <div key={link.id} className="rounded-md border p-3 text-sm">
+                <div key={link.id} className="rounded-md border border-border bg-background/35 p-3 text-sm">
                   <form action={updateTrackingLink} className="space-y-3">
                     <input type="hidden" name="id" value={link.id} />
                     <FormField name="name" label="Nome" defaultValue={link.name} />
@@ -99,7 +99,7 @@ export default async function FunnelPage({ searchParams }: SearchProps) {
                   </form>
                 </div>
               ))}
-              <form action={createTrackingLink} className="space-y-3 border-t pt-4">
+              <form action={createTrackingLink} className="space-y-3 border-t border-border pt-4">
                 <input type="hidden" name="projectId" value={project.id} />
                 <FormField name="name" label="Nome" />
                 <FormField name="url" label="URL base" />

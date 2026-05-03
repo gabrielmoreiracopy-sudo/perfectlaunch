@@ -121,13 +121,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               <CardTitle>Próximos passos</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
-              <Link className="block rounded-md border p-3 hover:bg-muted" href={`/strategy?projectId=${project.id}`}>
+              <Link className="block rounded-md border border-border bg-background/35 p-3 transition hover:bg-secondary" href={`/strategy?projectId=${project.id}`}>
                 Revisar estratégia e promessa ROMA
               </Link>
-              <Link className="block rounded-md border p-3 hover:bg-muted" href={`/content?projectId=${project.id}`}>
+              <Link className="block rounded-md border border-border bg-background/35 p-3 transition hover:bg-secondary" href={`/content?projectId=${project.id}`}>
                 Finalizar CPLs e VSL
               </Link>
-              <Link className="block rounded-md border p-3 hover:bg-muted" href={`/funnel?projectId=${project.id}`}>
+              <Link className="block rounded-md border border-border bg-background/35 p-3 transition hover:bg-secondary" href={`/funnel?projectId=${project.id}`}>
                 Conferir páginas e links UTM
               </Link>
             </CardContent>
